@@ -30,7 +30,8 @@ public class Attribute<V> {
   }
 
   /**
-    * This method will return the value of index i of the Column
+    * This method will return the value of index i of the Column. It will return null if 
+    * index is out of bounds
     * @param index index
     * @return the value
     */

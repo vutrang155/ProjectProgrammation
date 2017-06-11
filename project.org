@@ -1,0 +1,45 @@
+* *Things to do*
+
+** TODO Programmation
+*** TODO Model Programming
+**** DONE enum Constraint
+**** DONE enum DataType
+**** TODO class Attribute
+**** TODO class Table
+**** TODO class Database
+**** TODO class Server
+
+*** TODO View Programming
+
+*** TODO Controller Programming
+
+
+** TODO Rendre
+   SCHEDULED: <2006-06-28 mer.>
+** TODO Presentation
+   SCHEDULED: <2017-06-29 jeu.>
+
+
+* Remarque
+- N'oublie pas java, javadoc, junit et ent.
+
+* *Contenu du rendu*
+
+** Rapport au format PDF						
+- présentation de l'organisation du projet : planification et répartition des tâches au sein du groupe
+- mise à jour des diagrammes présentés dans le rapport d'analyse, accompagnée des justifications nécessaires
+- description des choix techniques et algorithmiques
+- diagramme de classes d'implémentation obtenu par rétro-conception
+- description de la campagne de tests effectuée   
+- état d'avancement réel du développement, à comparer avec les objectifs annoncés dans le cahier d'analyse
+- synthèse des difficultés rencontrées et des solutions apportées
+- bilan personnel du travail réalisé
+
+**   Archive (contenant l'arborescence entière de l'espace de développement bien structuré)
+- les sources des classes développées et de leurs tests
+- les sources des documents rendus
+- l'archive jar qui permet de lancer le projet
+- la javadoc de votre application
+- le fichier build.xml qui permet de construire l'application
+- une notice d'installation/lancement (readme.txt)
+- un manuel utilisateur
