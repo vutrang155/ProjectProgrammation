@@ -1,29 +1,65 @@
 * *Things to do*
 
 ** TODO Programmation
+
 *** TODO Model Programming
+
 **** DONE enum Constraint
+
+
 **** DONE enum DataType
+
+
 **** TODO class Attribute
-***** DONE class AttributeTest
-***** TODO class Attribute
+***** TODO javadoc
+***** TODO junit
+***** TODO java
+***** TODO ant
+
+
 **** TODO class Table
-**** TODO class Database
+***** DONE javadoc
+***** TODO junit
+***** TODO java
+***** TODO ant
+
+
 **** TODO class Server
+***** TODO javadoc
+***** TODO junit
+***** TODO java
+***** TODO ant
+
+     
+
 
 *** TODO View Programming
+
+
 
 *** TODO Controller Programming
 
 
+
+
 ** TODO Rendre
    SCHEDULED: <2006-06-28 mer.>
+
+
+
 ** TODO Presentation
    SCHEDULED: <2017-06-29 jeu.>
    
+
+
+
 * Remarque
 - N'oublie pas java, javadoc, junit et ent.
 - Pour la class Attribute, verifier que les constraint ajoutes au column soient capables de verifier les valeurs avant le constraint
+- Les attribute NUMBER ajoute sera changer a String pour verifier la longueur
+* Changes
+** DONE add length of an attribute
+
 * *Contenu du rendu*
 
 ** Rapport au format PDF						

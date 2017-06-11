@@ -7,19 +7,19 @@ package model;
  * @author Le-Floch Thomas
  */
 public class Attribute<V> {
+    
     private ArrayList<Constraint> constraints;
     private String name;
     private ArrayList<V> values;
-
+    private int length;
+    
     /**
      * Initialise the name of the column and the list
      * @param name name of the column
      */
-    public Attribute(String name) {
-	this.name = name;
-	this.values = new ArrayList();
+    public Attribute(String name, int length) {
     }
-
+    
     /**
      * This method will return the name of the Column
      * @return name of the class
@@ -34,6 +34,23 @@ public class Attribute<V> {
      */
     public void setName(String name) {
 	this.name = name;
+    }
+    
+    /**
+     * This method will return the length maximum that user can add 
+     * @return length maximum that user can add
+     */
+    public String getLength() {
+        
+    }
+
+    /**
+     * This method allow to change the length maximum that user can add. If length is 
+     * smaller than zero, Throw an Exception
+     * @param length length maximum that user can add
+     */
+    public void setLength(int length) {
+        
     }
 
     /**

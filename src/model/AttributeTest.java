@@ -13,7 +13,7 @@ public class AttributeTest {
     protected void setUp() {
 
 	this.name = "AttributeTest";
-	this.attributeInt = new Attribute(name);
+	this.attributeInt = new Attribute(name,10);
 
     }
 
@@ -31,11 +31,26 @@ public class AttributeTest {
 
     }
 
+    
+    @Test()
+    public void testSetGetLength() {
+
+	attributeInt.setLength(3);
+	Assert.assertFalse(attributeInt.getLength() == 3);
+
+	attributeInt.setLength(-3);
+	Assert.assertFalse(attributeInt.getLength() == -3);
+
+	attributeInt.setlength(0);
+	Assert.assertTrue(attributeInt.getLength() == 0);
+
+    }
+
     @Test()
     public void testAddValue() {
 
-	this.attributeInt.addValue(null)
-	    Assert.assertFalse(attributeInt.getValue(0) == null);
+	this.attributeInt.addValue(null);
+	Assert.assertFalse(attributeInt.getValue(0) == null);
 	for(int i = 0; i < values.length; i++) {
 	    attributeInt.addValue(v);
 	}
@@ -82,6 +97,26 @@ public class AttributeTest {
 	Assert.assertTrue( attribute.getValue( values.length - 1 ) == 2 )
 	
     }
+
+    
+    @Test()
+    public void testOutOfLength() {
+
+	Attribute attributeString = new Attribute("Test String", 3);
+
+	attributeString.addValue("HI");
+	Assert.assertTrue( attributeString.getValue(0).equals("HI") );
+
+	attributeString.setValue(0 , "");
+	Assert.assertTrue( attributeString.getValue(0).equals("") );
+
+	attributeString.setValue(0, "aaaaaa");
+	Assert.assertFalse( attributeString.getValue(0).equals("aaaaaa") );
+
+    }
+
+			    
+			   
 
     @Test()
     public void testAddConstraint() {
