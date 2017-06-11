@@ -5,6 +5,8 @@
 **** DONE enum Constraint
 **** DONE enum DataType
 **** TODO class Attribute
+***** DONE class AttributeTest
+***** TODO class Attribute
 **** TODO class Table
 **** TODO class Database
 **** TODO class Server
@@ -18,11 +20,10 @@
    SCHEDULED: <2006-06-28 mer.>
 ** TODO Presentation
    SCHEDULED: <2017-06-29 jeu.>
-
-
+   
 * Remarque
 - N'oublie pas java, javadoc, junit et ent.
-
+- Pour la class Attribute, verifier que les constraint ajoutes au column soient capables de verifier les valeurs avant le constraint
 * *Contenu du rendu*
 
 ** Rapport au format PDF						
