@@ -1,3 +1,5 @@
+import database.model.*;
+
 public class AttributeTest {
     private int[] values = {0, 9, 3, 2, 8, 12, 9};
     private String name;

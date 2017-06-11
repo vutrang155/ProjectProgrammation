@@ -1,4 +1,4 @@
-package model;
+package database.model;
 
 /**
  * Simulates the Column of a Database, with some basic function that is balanced with constraints

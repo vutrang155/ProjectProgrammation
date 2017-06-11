@@ -1,3 +1,5 @@
+package database.model;
+
 /**
   * This enum simulates some constraints' statuses, NOTNULL, PRIMARY KEY, REFERENCE KEY, NOTHING
   */
