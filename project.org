@@ -11,12 +11,12 @@
 
 
 **** TODO class Attribute
-***** TODO javadoc
+***** DONE javadoc
 ***** TODO junit
 ***** TODO java
 ***** TODO ant
 
-
+      
 **** TODO class Table
 ***** DONE javadoc
 ***** TODO junit
@@ -24,14 +24,18 @@
 ***** TODO ant
 
 
-**** TODO class Server
-***** TODO javadoc
+**** TODO class Database
+***** DONE javadoc
 ***** TODO junit
 ***** TODO java
 ***** TODO ant
 
-     
-
+**** TODO class Server
+***** DONE javadoc
+***** TODO junit
+***** TODO java
+***** TODO ant      
+           
 
 *** TODO View Programming
 
@@ -46,17 +50,21 @@
    SCHEDULED: <2006-06-28 mer.>
 
 
-
+   
 ** TODO Presentation
    SCHEDULED: <2017-06-29 jeu.>
    
 
-
+   
 
 * Remarque
 - N'oublie pas java, javadoc, junit et ent.
 - Pour la class Attribute, verifier que les constraint ajoutes au column soient capables de verifier les valeurs avant le constraint
 - Les attribute NUMBER ajoute sera changer a String pour verifier la longueur
+- Add the deleteTable()
+- Delete the Tuple()
+- Set table name
+- Table dans Database est geree par HashMap
 * Changes
 ** DONE add length of an attribute
 

@@ -21,6 +21,12 @@ public class Table {
     public Table( String name ) {}
 
     /**
+     * Change the table's name
+     * @param name name that user want to change to
+     */ 
+    public void setName(String name) {}
+
+    /**
      * Allows user to add a column (attribute) to the table, DataType can be CHAR, 
      * NUMBER, or DATE. for Date type, the length will be automatically 1, the  length
      * passed in parameters will be canceled
@@ -38,6 +44,11 @@ public class Table {
      */
     public void insertTUple( Attribute[] attributes ) {}
 
+    /**
+     * Delete a line of the table
+     * @param line line that user want to delete
+     */
+    public void delTUple( int line ) {}
     /**
      * Allows users to edit the value of a t-uple by enter the place and the value
      * as a String. If the index or column meet the violation (smaller than 0, out

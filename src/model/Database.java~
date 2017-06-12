@@ -1,0 +1,26 @@
+package Database.model;
+
+import java.util.*;
+
+/**
+ * Database holds the function of management the tables of the database. It
+ * allows user to initialisze
+public class Database {
+
+    private String name;
+    private ArrayList<Tables> tables;
+
+    public Database(String name, ArrayList<Table> tables) {}
+
+    public ArrayList<Table> getTables() {}
+
+    public String getName() {}
+
+    public void setName(String name) {}
+
+    public void addTable(Table table) {}
+
+    public void delTable(int index) {}
+
+    
+    

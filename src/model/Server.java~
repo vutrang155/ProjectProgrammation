@@ -1,0 +1,29 @@
+package database.model;
+
+
+
+public class Server {
+
+    private Connect connect;
+    private Statement stmt;
+    private String username;
+    private String password;
+
+    public Server(String username, String password) {
+    }
+
+    public login() {}
+
+    public createUser(String username, String password) {}
+
+    public void executeCode(String code) {
+    }
+
+    public void exportToDatabase() {
+    }
+
+    public void imporFromDatabase() {
+    }
+
+    public Database getDatabase() {
+    }
