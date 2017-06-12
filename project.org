@@ -65,8 +65,14 @@
 - Delete the Tuple()
 - Set table name
 - Table dans Database est geree par HashMap
+- Les checks doivent etre ajoutes pendant la creation du table
+- Watch the ReferenceKey (Change)
 * Changes
 ** DONE add length of an attribute
+
+** Probleme : Les cles etrangers sont des attributs qui peuvent etre assosies par les tables differents
+*** TODO Class Table ? 
+*** TODO Class Attributs ? 
 
 * *Contenu du rendu*
 

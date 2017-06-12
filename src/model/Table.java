@@ -6,19 +6,20 @@ import java.util.*;
  * The class simulates the Table of the database, in which columns are added and managed 
  * as an Arraylist. Also, the class allows user to insert t-uples and basic constraint
  * to column.
+ * The checks can only be added while the creation of the column.
  * @author TRANG Hoang Phong Vu
  * @author 
  */
 public class Table {
 
     private String name;
-    private Attribute attributes;
+    private ArrayList<Attribute> attributes; 
 
     /**
      * Initialise the table
      * @param name name of the table
      */
-    public Table( String name ) {}
+    public Table(String name) {}
 
     /**
      * Change the table's name
@@ -49,6 +50,7 @@ public class Table {
      * @param line line that user want to delete
      */
     public void delTUple( int line ) {}
+    
     /**
      * Allows users to edit the value of a t-uple by enter the place and the value
      * as a String. If the index or column meet the violation (smaller than 0, out
@@ -58,14 +60,24 @@ public class Table {
      * @param strValue value as string
      */
     public void editValue(int index, int column, String strValue ) {}
-
+    
     /**
      * Add constraint to the column. If column meet the violation (smaller than 
-     * 0, out of bounds), The method will be canceled
+     * 0, out of bounds), The method will be canceled. If the constraint is 
+     * REFERENCEKEY, tha method will be canceled. User must call the method
+     * addConstraint(int,Constraint,Attribute)
      * @param order the place of the column
      * @param constraint constraint that user want to add
      */
     public void addConstraint (int column, Constraint constraint ) {}
+
+     /**
+     * Add REFERENCEKEY constraint to the column. If column meet the violation (smaller
+     * than 0, out of bounds), The method will be canceled.  
+     * @param order the place of the column
+     * @param constraint constraint that user want to add
+     */
+    public void addConstraint (int column, Constraint constraint, Attribute attribute) {}
 
     /**
      * Return the column by entering the column of the column. If number of the 
