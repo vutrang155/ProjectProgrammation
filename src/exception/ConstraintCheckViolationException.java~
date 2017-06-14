@@ -1,0 +1,17 @@
+import database.exception; 
+
+public class ConstraintCheckViolationException extends Exception {
+
+    public ConstraintCheckViolationException() {
+
+	super();
+
+    }
+
+    public ConstraintCheckViolationException(String msg) {
+
+	super(msg);
+
+    }
+
+}

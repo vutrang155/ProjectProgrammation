@@ -1,4 +1,4 @@
-import database.exception; 
+package database.exception; 
 
 public class SizeException extends Exception {
 

@@ -5,5 +5,6 @@ package database.model;
 public enum DataType {
   CHAR,
   NUMBER,
+  DOUBLE,
   DATE
 }

@@ -73,9 +73,12 @@ public class Table {
 
      /**
      * Add REFERENCEKEY constraint to the column. If column meet the violation (smaller
-     * than 0, out of bounds), The method will be canceled.  
+     * than 0, out of bounds), The method will be canceled. If the constraint is not
+     * a REFERENCEKEY constraint, the method will be canceled and user will be called
+     * to user addConstraint(int,Constraint)  
      * @param order the place of the column
      * @param constraint constraint that user want to add
+     * @param attribute attribute from another table
      */
     public void addConstraint (int column, Constraint constraint, Attribute attribute) {}
 

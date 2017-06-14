@@ -67,7 +67,8 @@
 - Table dans Database est geree par HashMap
 - Les checks doivent etre ajoutes pendant la creation du table
 - Watch the ReferenceKey (Change)
-- Date >= : After <= Sooner 
+- Date >= : After <= Sooner
+- verif d'abord que les valeurs sont bien de type String, Integer, Double or Date ! 
 * Changes
 ** DONE add length of an attribute
 
