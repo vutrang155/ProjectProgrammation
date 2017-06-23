@@ -14,35 +14,45 @@ public class AttributeTest {
     private String name;
     private Attribute<Integer> attributeInt;
 
-    public AttributeTest(String name) {
+    /* public AttributeTest(String name) {
 
-	//	super(name);
+	super(name);
 
-    }
+	}*/
 
     @Before()
-    protected void setUp() {
+    public void setUp() {
 	try {
 	this.name = "AttributeTest";
-	this.attributeInt = new Attribute<Integer>(name,10);
+	this.attributeInt = new Attribute<Integer>(null,name,10,DataType.INTEGER);
 	}
 	catch (SizeException se) {
-	    System.out.println(se.getMessage());
+	   Assert.assertFalse(true);
 	}
     }
 
     @Test()
     public void testSetGetName() {
-	
-	attributeInt.setName(null);
+	try {
+	    attributeInt.setName(null);
+	}
+	catch (NullPointerException e) { Assert.assertTrue(true); }
 	Assert.assertFalse(attributeInt.getName() == null);
-	
-	attributeInt.setName("Hi");
+
+
+	try {
+	    attributeInt.setName("Hi");
+	}
+	catch (NullPointerException e) {   Assert.assertFalse(true); }
 	Assert.assertTrue(attributeInt.getName() == "Hi");
 
-	attributeInt.setName("");
+
+	try {
+	    attributeInt.setName("");
+	}
+	catch (NullPointerException e) {   Assert.assertFalse(true); }
 	Assert.assertTrue(attributeInt.getName() == "");
-	
+
     }
 
     
@@ -50,59 +60,48 @@ public class AttributeTest {
     public void testSetGetLength() {
 
 	try {
-	attributeInt.setLength(3);
+	    attributeInt.setLength(3);
+	    Assert.assertTrue(true);
 	}
 	catch (SizeException se) {
-	    System.out.println(se.getMessage());
+	    Assert.assertFalse(true);
 	}
 	finally {
-	    Assert.assertFalse(attributeInt.getLength() == 3);
+	    Assert.assertTrue(attributeInt.getLength() == 3);
 	}
 	
 	try {
-	attributeInt.setLength(-3);
+	    attributeInt.setLength(-3);
+	    Assert.assertFalse(true);
 	}
 	catch (SizeException se) {
-	    System.out.println(se.getMessage());
+	    Assert.assertTrue(true);
 	}
-	finally {
-	    Assert.assertFalse(attributeInt.getLength() == -3);
-	}
-	
+
 	try {
-	attributeInt.setLength(0);
+	    attributeInt.setLength(0);
 	}
 	catch (SizeException se) {
-	    System.out.println(se.getMessage());
+	    Assert.assertTrue(true);
 	}
 	finally {
-	    Assert.assertTrue(attributeInt.getLength() == 0);
+	    Assert.assertFalse(attributeInt.getLength() == 0);
 	}
 	    
     }
 
     @Test()
     public void testAddValue() {
-
-	try{
-	    this.attributeInt.addValue(null);
-	}
-	catch  (ConstraintCheckViolationException e) {System.out.println(e.getMessage()); }
-	catch (NullPointerException e) { System.out.println(e.getMessage()); }
-	finally {
-	    try {Assert.assertFalse(attributeInt.getValue(0) == null);}
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
-	}
 		
 	for(int i = 0; i < values.length; i++) {
 	    try { this.attributeInt.addValue(values[i]); }
-	    catch (ConstraintCheckViolationException e) { System.out.println(e.getMessage()); }
-	    catch (NullPointerException e) { System.out.println(e.getMessage()); }
+	    catch (ConstraintCheckViolationException e) { Assert.assertFalse(true); }
+	    catch (NullPointerException e) { Assert.assertFalse(true); }
 	}
 
 	for(int i = 0; i < values.length; i++) {
-	    try {Assert.assertFalse(attributeInt.getValue(i) == values[i]);}
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    try {Assert.assertTrue(attributeInt.getValue(i) == values[i]);}
+	    catch (SizeException se) { Assert.assertFalse(true); }
 	}
     
     }
@@ -110,41 +109,40 @@ public class AttributeTest {
     public void testGetValue() {
 
 	try {
-	    this.attributeInt = new Attribute<Integer>(this.name,10);
+	    this.attributeInt = new Attribute<Integer>(null,this.name,10,DataType.INTEGER);
 	}
-	catch (SizeException se) {}
+	catch (SizeException se) {Assert.assertFalse(true);}
 	
 	for ( int i = 0 ; i < values.length ; i++ ) {
 	    try { attributeInt.addValue(values[i]); }
-	    catch (NullPointerException npe) {}
-	    catch (ConstraintCheckViolationException ccve) {}
+	    catch (NullPointerException npe) {Assert.assertFalse(true);}
+	    catch (ConstraintCheckViolationException ccve) {Assert.assertFalse(true);}
 	}
 
 	try {
 	    Assert.assertTrue(attributeInt.getValue(-1) == null);
 	}
 	catch (SizeException se) {
-	    System.out.println(se.getMessage());
+	    Assert.assertTrue(true);
 	}
 	finally {
 	    try {
 		Assert.assertTrue(attributeInt.getValue(values.length) == null);
 	    }
-	    catch (SizeException se) {
-	    }
+	    catch (SizeException se) {Assert.assertFalse(true);}
 	}
 	    
       
 	try {
 	    Assert.assertTrue(attributeInt.getValue(0).intValue() == 0);
 	}
-	catch (SizeException se) {
+	catch (SizeException se) {Assert.assertFalse(true);
 	}
     
 	try {
 	    Assert.assertTrue(attributeInt.getValue(1).intValue() == 10);
 	}
-	catch (SizeException se) {
+	catch (SizeException se) {Assert.assertFalse(true);
 	}
 
     }
@@ -152,64 +150,53 @@ public class AttributeTest {
     @Test()
     public void testSetValue() {
 	try {
-	this.attributeInt = new Attribute<Integer>(this.name,10);
+	    this.attributeInt = new Attribute<Integer>(null,this.name,10,DataType.INTEGER);
 	}
-	catch (SizeException se) {}
+	catch (SizeException se) {Assert.assertFalse(true);}
     
         for ( int i = 0 ; i < values.length ; i++ ) {
 	    try {
 		attributeInt.addValue(values[i]);
 	    }
-	    catch (NullPointerException npe) {}
-	    catch (ConstraintCheckViolationException ccve) {}
+	    catch (NullPointerException npe) {Assert.assertFalse(true);}
+	    catch (ConstraintCheckViolationException ccve) {Assert.assertFalse(true);}
 	}
 
 	try {
 	    attributeInt.setValue(999,4);
 	}
-	catch (SizeException se) { System.out.println( se.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println( ccve.getMessage()); }
-	finally {
-	    try {
-		Assert.assertFalse(attributeInt.getValue(999).intValue() == 4);
-	    }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
-	}
+	catch (SizeException se) {Assert.assertTrue(true);}
+	catch (ConstraintCheckViolationException ccve) { Assert.assertFalse(true);}
+
 
 	try {
 	    attributeInt.setValue(-1,4);
 	}
-	catch (SizeException se) { System.out.println( se.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println( ccve.getMessage()); }
-	finally {
-	    try {
-		Assert.assertFalse(attributeInt.getValue(-1).intValue() == 4);
-	    }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
-	}
+	catch (SizeException se) { Assert.assertTrue(true);}
+	catch (ConstraintCheckViolationException ccve) { Assert.assertFalse(true); }
 	
 	try {
 	    attributeInt.setValue(0,4);
 	}
-	catch (SizeException se) { System.out.println( se.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println( ccve.getMessage()); }
+	catch (SizeException se) {Assert.assertFalse(true); }
+	catch (ConstraintCheckViolationException ccve) { Assert.assertFalse(true); }
 	finally {
 	    try {
 		Assert.assertTrue(attributeInt.getValue(0).intValue() == 4);
 	    }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    catch (SizeException se) {Assert.assertFalse(true);}
 	}
 	
 	try {
 	    attributeInt.setValue(values.length-1,2);
 	}
-	catch (SizeException se) { System.out.println( se.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println( ccve.getMessage()); }
+	catch (SizeException se) {Assert.assertFalse(true); }
+	catch (ConstraintCheckViolationException ccve) { Assert.assertFalse(true); }
 	finally {
 	    try {
 		Assert.assertTrue(attributeInt.getValue(values.length-1).intValue() == 2);
 	    }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    catch (SizeException se) {Assert.assertFalse(true); }
 	}
 
 
@@ -222,46 +209,46 @@ public class AttributeTest {
 
 	Attribute<String> attributeString = null;
 	try {
-	    attributeString = new Attribute<String>("Test String", 3);
+	    attributeString = new Attribute<String>(null,"Test String", 3,DataType.CHAR);
 	}
-	catch (SizeException se) {}
+	catch (SizeException se) {Assert.assertFalse(true);}
         
 
 	try {
 	    attributeString.addValue("HI");
 	}
-	catch (NullPointerException npe) { System.out.println(npe.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println(ccve.getMessage()); }
+	catch (NullPointerException npe) { Assert.assertFalse(true); }
+	catch (ConstraintCheckViolationException ccve) {Assert.assertFalse(true); }
 	finally {
 	    try {
 		Assert.assertTrue( attributeString.getValue(0).equals("HI") );
 	    }
-	    catch ( SizeException se ) { System.out.println(se.getMessage()); }
+	    catch ( SizeException se ) {Assert.assertFalse(true); }
 	}
 
 
 	try {
 	    attributeString.setValue(0, "");
 	}
-	catch (SizeException se) { System.out.println(se.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println(ccve.getMessage()); }
+	catch (SizeException se) {Assert.assertFalse(true); }
+	catch (ConstraintCheckViolationException ccve) {Assert.assertFalse(true); }
 	finally {
 	    try {
 		Assert.assertTrue( attributeString.getValue(0).equals("") ); 
 	    }
-	    catch ( SizeException se ) { System.out.println(se.getMessage()); }
+	    catch ( SizeException se ) {Assert.assertFalse(true); }
 	}
 
 	try {
 	    attributeString.setValue(0, "aaaaaa");
 	}
-	catch (SizeException se) { System.out.println(se.getMessage()); }
-	catch (ConstraintCheckViolationException ccve) { System.out.println(ccve.getMessage()); }
+	catch (SizeException se) {Assert.assertFalse(true);}
+	catch (ConstraintCheckViolationException ccve) { Assert.assertTrue(true);}
 	finally {
 	    try {
 		Assert.assertFalse( attributeString.getValue(0).equals("aaaaaa") ); 
 	    }
-	    catch ( SizeException se ) { System.out.println(se.getMessage()); }
+	    catch ( SizeException se ) {Assert.assertFalse(true);}
 	}
 
 
@@ -275,44 +262,44 @@ public class AttributeTest {
     public void testAddConstraint() {
 
 	try {
-	    this.attributeInt = new Attribute<Integer>(this.name,10);
+	    this.attributeInt = new Attribute<Integer>(null,this.name,10, DataType.INTEGER);
 	}
-	catch (SizeException se) {}
+	catch (SizeException se) {Assert.assertFalse(true);}
     
         for ( int i = 0 ; i < values.length ; i++ ) {
 	    try {
 		attributeInt.addValue(values[i]);
 	    }
-	    catch (NullPointerException npe) {}
-	    catch (ConstraintCheckViolationException ccve) {}
+	    catch (NullPointerException npe) {Assert.assertFalse(true);}
+	    catch (ConstraintCheckViolationException ccve) {Assert.assertFalse(true);}
 	}
 
 	try {
 	    this.attributeInt.addConstraint( Constraint.PRIMARYKEY );
 	    Assert.assertTrue( attributeInt.getConstraint(0) == Constraint.PRIMARYKEY );
 	}
-	catch (ConstraintCheckViolationException ccve ) { System.out.println(ccve.getMessage()) ; }
-	catch (SizeException se ) { System.out.println(se.getMessage()) ; }
+	catch (ConstraintCheckViolationException ccve ) { Assert.assertFalse(true); }
+	catch (SizeException se ) {Assert.assertFalse(true); }
 	
 	try {
 	    this.attributeInt.addConstraint( Constraint.NOTHING );
 	    Assert.assertTrue( attributeInt.getConstraint(1) == Constraint.NOTHING );
 	}
-	catch (ConstraintCheckViolationException ccve ) { System.out.println(ccve.getMessage()); }
-	catch (SizeException se ) { System.out.println(se.getMessage()) ; }
+	catch (ConstraintCheckViolationException ccve ) {Assert.assertFalse(true); }
+	catch (SizeException se ) { Assert.assertFalse(true); }
 
 	// Add existed constraint, for testing verifExistConstraints()
 	try {
 	    this.attributeInt.setConstraint(1, Constraint.PRIMARYKEY );
 
 	}
-	catch (ConstraintCheckViolationException ccve ) { System.out.println(ccve.getMessage()); }
-	catch (SizeException se )  { System.out.println(se.getMessage()); }
+	catch (ConstraintCheckViolationException ccve ) { Assert.assertFalse(true); }
+	catch (SizeException se )  { Assert.assertFalse(true); }
 	finally {
 	    try {
-	        Assert.assertTrue( attributeInt.getConstraint(1) == Constraint.PRIMARYKEY );
+	        Assert.assertFalse( attributeInt.getConstraint(1) == Constraint.PRIMARYKEY );
 	    }
-	    catch (SizeException se ) { System.out.println(se.getMessage()); }
+	    catch (SizeException se ) {Assert.assertFalse(true); }
 	}
 					 
     }
@@ -321,59 +308,58 @@ public class AttributeTest {
     public void testAddCheck() {
 
 	try {
-	    this.attributeInt = new Attribute<Integer>(this.name,10);
+	    this.attributeInt = new Attribute<Integer>(null,this.name,10, DataType.INTEGER);
 	}
-	catch (SizeException se) {}
+	catch (SizeException se) { Assert.assertFalse(true);}
 	
 	this.attributeInt.addCheck(">=", 10);
 
 	// Also Test verifValues()
 
 	try { this.attributeInt.addValue(5); }
-	catch (ConstraintCheckViolationException e) { System.out.println(e.getMessage()); }
-	catch (NullPointerException e) { System.out.println(e.getMessage()); }
+	catch (ConstraintCheckViolationException e) {  Assert.assertTrue(true); }
+	catch (NullPointerException e) {  Assert.assertFalse(true); }
 	finally {
 	    try { Assert.assertTrue(attributeInt.getValue(0) == 5); }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    catch (SizeException se) {  Assert.assertTrue(true); }
 	}
 
-	try { this.attributeInt.setValue(0,0); }
-	catch (SizeException e)  { System.out.println(e.getMessage()); }
-	catch (ConstraintCheckViolationException e) { System.out.println(e.getMessage()); }
+	try { this.attributeInt.addValue(0); }
+	catch (ConstraintCheckViolationException e) {  Assert.assertTrue(true); }
 	finally {
 	    try { Assert.assertTrue(attributeInt.getValue(0) == 0); }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    catch (SizeException se) { Assert.assertTrue(true); }
 	}
 
-	try { this.attributeInt.setValue(0,10); }
-	catch (SizeException e) { System.out.println(e.getMessage()); }
-	catch (ConstraintCheckViolationException e) { System.out.println(e.getMessage()); }
+	try { this.attributeInt.addValue(10); }
+	catch (ConstraintCheckViolationException e) {  Assert.assertFalse(true); }
 	finally {
 	    try { Assert.assertTrue(attributeInt.getValue(0) == 10); }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    catch (SizeException se) {  Assert.assertFalse(true); }
 	}
 	
 	try { this.attributeInt.setValue(0,15); }
-	catch (SizeException e) { System.out.println(e.getMessage()); }
-	catch (ConstraintCheckViolationException e) { System.out.println(e.getMessage()); }
+	catch (SizeException e) {  Assert.assertFalse(true); }
+	catch (ConstraintCheckViolationException e) {  Assert.assertFalse(true); }
 	finally {
-	    try { Assert.assertFalse(attributeInt.getValue(0) == 15); }
-	    catch (SizeException se) { System.out.println(se.getMessage()); }
+	    try { Assert.assertTrue(attributeInt.getValue(0) == 15); }
+	    catch (SizeException se) {  Assert.assertFalse(true); }
 	}
 	
+    }
+
+    @Test()
+    public void testGetType() {
+	try {
+	    this.attributeInt = new Attribute<Integer>(null,this.name,10, DataType.INTEGER) {};
+	}
+	catch (SizeException se) { Assert.assertFalse(true);}
+
+	Assert.assertTrue(this.attributeInt.getType() == DataType.INTEGER);
     }
 
     public static junit.framework.Test suite() {
 	return new junit.framework.JUnit4TestAdapter(AttributeTest.class);
     }
-    /*public static void main(String[] args) {
-	Result result = JUnitCore.runClasses(AttributeTest.class);
-
-	for (Failure failure : result.getFailures()) {
-	    System.out.println(failure.toString());
-	}
-
-	System.out.println(result.wasSuccessful());
-	}*/
-
+   
 }

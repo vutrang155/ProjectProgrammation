@@ -12,23 +12,24 @@
 
 **** TODO class Attribute
 ***** DONE javadoc
-***** TODO junit
-***** TODO java
+***** DONE junit
+***** DONE java
 ***** TODO ant
 
       
 **** TODO class Table
 ***** DONE javadoc
-***** TODO junit
-***** TODO java
+***** DONE junit
+***** DONE java
 ***** TODO ant
 
 
 **** TODO class Database
 ***** DONE javadoc
-***** TODO junit
-***** TODO java
+***** DONE junit
+***** DONE java
 ***** TODO ant
+
 
 **** TODO class Server
 ***** DONE javadoc
@@ -56,7 +57,7 @@
    
 
    
-
+   
 * Remarque
 - N'oublie pas java, javadoc, junit et ent.
 - Pour la class Attribute, verifier que les constraint ajoutes au column soient capables de verifier les valeurs avant le constraint
@@ -68,6 +69,8 @@
 - Les checks doivent etre ajoutes pendant la creation du table
 - Watch the ReferenceKey (Change)
 - Date >= : After <= Sooner 
+- Always create subclass
+
 * Changes
 ** DONE add length of an attribute
 
@@ -101,3 +104,5 @@ le truc. On peut gerer les attributs d'une cle etrangere en Vue.
 - le fichier build.xml qui permet de construire l'application
 - une notice d'installation/lancement (readme.txt)
 - un manuel utilisateur
+
+* Reflection !!!@!

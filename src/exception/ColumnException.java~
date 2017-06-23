@@ -1,0 +1,22 @@
+package database.exception; 
+
+/**
+ * ConstraintCheckViolation, which is an extended class of Exception, is called when the 
+ * constraint or check is violated, existed, ...
+ * @author TRANG Hoang Phong Vu
+ */
+public class ColumnException extends Exception {
+
+    public ColumnException() {
+
+	super();
+
+    }
+
+    public ColumnException(String msg) {
+
+	super(msg);
+
+    }
+
+}

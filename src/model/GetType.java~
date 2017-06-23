@@ -1,0 +1,11 @@
+public class GetType<V> {
+    @SuppressWarnings("unchecked")
+    /**
+     * Return the type of Attribute 
+     * @return attribute's datatype
+     */
+    public static final <V> Class<V> getType(final Attribute<V> myObject) {
+	return (Class<V>)((ParameterizedType) myObject.getClass().getGenericSuperclass()).getActualTypeArguments()[0] ;
+    }
+
+}

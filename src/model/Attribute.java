@@ -3,6 +3,10 @@ package database.model;
 import database.exception.*;
 
 import java.util.*;
+import java.text.*;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
 /**
  * Simulates the Column of a Database, with some basic function that is balanced with constraints
@@ -19,19 +23,25 @@ public class Attribute<V> {
     private ArrayList<V> values;
     private int length;
     private Attribute<V> referenceKey;
+    public DataType type;
+    private Table referenceTable;
+    private Table tab;
     
     /**
      * Initialise the name of the column and the list
      * @param name name of the column
      */
-    public Attribute(String name, int length) throws SizeException {
+    public Attribute(Table tab, String name, int length, DataType type) throws SizeException {
 
 	this.name = name;
 	this.referenceKey = null;
 	this.values = new ArrayList<V>();
 	this.checks = new HashMap<String,V>();
 	this.constraints = new ArrayList<Constraint>();
-
+	this.type = type;
+	this.referenceTable = null;
+	this.tab = tab;
+	
 	if (length <= 0) {
 	    throw new SizeException("Length of the column must be greater than 0");
 	}
@@ -53,17 +63,10 @@ public class Attribute<V> {
      * This method allow to change the name of the column
      * @param name name that user want to change
      */
-    public void setName(String name) {
-	try {
+    public void setName(String name) throws NullPointerException {
+	if(name != null ) 
 	    this.name = name;
-	}
-	catch (NullPointerException npe) {
-	}
-	finally {
-	    if (name != null ) {
-		this.name = name;
-	    }
-	}
+	else throw new NullPointerException("Name must not be null ");
     }
     
     /**
@@ -106,7 +109,7 @@ public class Attribute<V> {
 
 	V ret = null;
 
-	if (index < 0 || index > values.size() ) throw new SizeException("Index out of bounds !");
+	if (index < 0 || index >= values.size() ) throw new SizeException("Index out of bounds !");
 	else ret = values.get(index);
 
 	return ret;
@@ -118,15 +121,62 @@ public class Attribute<V> {
      * . If yes, value will be added to Column. If not, the method will be cancelled
      * @param v value to be added
      */
-    public void addValue(V v) throws ConstraintCheckViolationException, NullPointerException {
+    public void addValue(V v) throws ConstraintCheckViolationException {
 	    
-	if ( v == null ) throw new NullPointerException("Added value must be initialized !");
-	else {
 	    if( this.verifValue(v) ) {
 		values.add(v);
 	    }
+	    
+    }
+
+    /**
+     * Like addValue, but parameters passed is String
+     */
+    public void addValueString(String strValue) throws ConstraintCheckViolationException, NumberFormatException, ParseException {
+	if (strValue == null ) this.addValue(null);
+	else if ( this.getType() == DataType.INTEGER ) {
+	   Integer v;
+	    try {	
+		v = Integer.valueOf(strValue.replaceAll(" ",""));
+		this.addValue((V)v);
+	    }
+	    catch (NumberFormatException e) {
+			
+		throw new NumberFormatException("Invalid number !");
+	    }
 	}
-    
+
+	else if ( this.getType() == DataType.DOUBLE ) {
+	    Double v;
+					    
+	    try {
+		v = Double.valueOf(strValue.replaceAll(" ","").replaceAll(",","."));
+		this.addValue((V)v);
+	    }
+	    catch (NumberFormatException e) {
+
+		throw new NumberFormatException("Invalid number !");
+	    }
+	}
+
+	else if ( this.getType() == DataType.CHAR ) {
+	    this.addValue((V)strValue);
+	}
+
+	else if ( this.getType() == DataType.DATE ) {
+	    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+	    Date v;
+		    
+	    try {
+		
+		v = df.parse(strValue.replaceAll(" ",""));
+		this.addValue((V)v);
+
+	    }
+	    catch ( ParseException e) {
+		throw new ParseException("Invalid value!",e.getErrorOffset());
+	    }
+	}
     }
 
     /**
@@ -158,8 +208,8 @@ public class Attribute<V> {
 		this.constraints.add(constraint);
 	    }
 	    else throw new ConstraintCheckViolationException("The constraint is existed !");
-	}
-	
+	}	
+	else throw new ConstraintCheckViolationException("Add constraint failed !");
     }
 
     /**
@@ -172,11 +222,23 @@ public class Attribute<V> {
 	
 	if (constraint == Constraint.REFERENCEKEY) {
 	    if (this.verifExistConstraints(constraint)) {
-		this.constraints.add(constraint);
-		this.referenceKey = column;
+		boolean isPRIMARYKEY = false;
+		for ( Constraint c : column.getAllConstraints() ) {
+		    if (c == Constraint.PRIMARYKEY ) {
+			isPRIMARYKEY = true;
+		    }
+		}
+
+	        if (isPRIMARYKEY) {
+		    this.constraints.add(constraint);
+		    this.referenceKey = column;
+		}
+		else throw new ConstraintCheckViolationException("The reference key must be a primary key !!!");
+		
 	    }
 	    else throw new ConstraintCheckViolationException("The constraint is existed !");
 	}
+	else throw new ConstraintCheckViolationException("Add constraint failed !");
 		    
     }
 
@@ -189,10 +251,31 @@ public class Attribute<V> {
     public Constraint getConstraint(int index) throws SizeException {
 	Constraint ret = null;
 
+
 	if (index < 0 || index > values.size() ) throw new SizeException("Index out of bounds !");
 	else ret = constraints.get(index);
 
 	return ret;
+    }
+
+    /**
+     * Return all of the constraints
+     * @return All of the constraints of Attribute
+     */
+    public ArrayList<Constraint> getAllConstraints() {
+
+	return this.constraints;
+
+    }
+
+    /**
+     * Return list of checks
+     * @return list of the checks
+     */
+    public HashMap<String, V> getAllChecks() {
+
+	return this.checks;
+
     }
     
     /**
@@ -229,182 +312,186 @@ public class Attribute<V> {
      * Verify when user do addValue that the value is fit with with the constraints and check
      * or not
      */
-    private boolean verifValue(V v) throws ConstraintCheckViolationException {
+    protected boolean verifValue(V v) throws ConstraintCheckViolationException {
 
 	boolean ret = true;
 
-	if (v instanceof String || v instanceof Integer || v instanceof Double || v instanceof Date) {
-
+	if (v instanceof String || v instanceof Integer || v instanceof Double || v instanceof Date || v == null) {
+	   
 	    //Verify the constraints
-	for ( Constraint c : constraints ) {
+	    for ( Constraint c : constraints ) {
 	      
-	    switch (c) {
+		switch (c) {
 
-	    case NOTNULL :
-		if (v==null) {
-		    ret = false;
-		    throw new ConstraintCheckViolationException("Value added must not be null !");
-		}
-		break;
-
-	    case PRIMARYKEY :
-		for ( V value :  values ) {
-		    if ( value.equals(v) ) {
+		case NOTNULL :
+		    if (v==null) {
 			ret = false;
-			throw new ConstraintCheckViolationException("Value must be unique !");
-		    }
-		}
-		break;
-
-	    case REFERENCEKEY :
-		// Convert object ArrayList to V List 
-	        ArrayList<V> valuesV = this.referenceKey.getValues();
-
-		
-		for ( V frValue : valuesV ) {
-		    if (!frValue.equals(v)) {
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be contained in "+referenceKey.getName());
+			throw new ConstraintCheckViolationException("Value added must not be null !");
 		    }
 		    break;
-		}
-		break;
 
-	    default :
-		break;
-	    }
+		case PRIMARYKEY :
 
-	}
-
-	//Verify the checks
-	for ( Map.Entry<String,V> entry : checks.entrySet() ) {
-	    String ope = entry.getKey();
-	    V value = entry.getValue();
-
-	    if (v instanceof Integer || v instanceof Double) {
-		if ( ope.equals(">=") ) {
-		    if (((Number)v).doubleValue() < ((Number)value).doubleValue() ) {
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be greater than or equal to " + ((Number)value).doubleValue() );
-			
+		    for ( V value : values ) {
+			if ( value.equals(v) ) {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("Value must be unique !");
+			}
 		    }
-		}
-		else if ( ope.equals("<=") ) {
-		    if (((Number)v).doubleValue() > ((Number)value).doubleValue() ) {
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be smaller than or equal to " +((Number)value).doubleValue() );
-			
-		    }
-		}
-		else if ( ope.equals("=") ) {
-		    if (((Number)v).doubleValue() != ((Number)value).doubleValue() ) {
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be equal to " +((Number)value).doubleValue() );
-			
-		    }
-		}
-		else if ( ope.equals("!=") ) {
-		    if (((Number)v).doubleValue() == ((Number)value).doubleValue() ) {
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be different from " +((Number)value).doubleValue() );
-			
-		    }
-		}
-		else if ( ope.equals(">") ) {
-		    ret = false;
-		    if (((Number)v).doubleValue() <= ((Number)value).doubleValue() ) {
-			throw new ConstraintCheckViolationException("The value must be greater than " +((Number)value).doubleValue() );
+		    break;
 
-		    }
-		}
-		else if ( ope.equals("<") ) {
-			ret = false;
-		    if (((Number)v).doubleValue() >= ((Number)value).doubleValue() ) {
-			throw new ConstraintCheckViolationException("The value must be smaller than " +((Number)value).doubleValue() );
-
-		    }
-		}
-		else {
-		    ret = false;
-		    throw new ConstraintCheckViolationException("Check must be >= <= > < != or =");
-		}
-	    }
-	    
-	    else if (v instanceof String) {
-		if ( ope.equals("=") ) {
-		    if ( !((String)v).equals(value) ) {
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be equal to " + value );
-
-		    }
-		}
-		else if ( ope.equals("!=") ) {
-		    if ( ((String)v).equals(value) ) throw new ConstraintCheckViolationException("The value must be different from " + value );
-		}
-		else {
-		    ret = false;
-		    throw new ConstraintCheckViolationException("Check must be = or !=");
-		    
-		}
-	    }
-
-	    else if (v instanceof Date) {
-
-		Calendar calV = Calendar.getInstance();
-		calV.setTime((Date)v);
+		case REFERENCEKEY :
+		    // Convert object ArrayList to V List 
+		    ArrayList<V> valuesV = this.referenceKey.getValues();
+		    boolean  m = false;
 		
-		if ( ope.equals(">=") ) {
-		    if ( ((Date)v).compareTo( (Date)value) < 0 ){
-			ret = false;
-			throw new ConstraintCheckViolationException("The value must be before" + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
-
+		    for ( V frValue : valuesV ) {
+			if (frValue.equals(v)) {
+			    m = true;
+			}
 		    }
+		    if (m == false) {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("The value must be contained in " +referenceKey.getName());
+		    }
+		    break;
+
+		default :
+		    break;
 		    
-		    if ( ope.equals("<=") ) {
-			if ( ((Date)v).compareTo( (Date)value) > 0 ) {
+		}
+
+	    }
+
+	    //Verify the checks
+	    for ( Map.Entry<String,V> entry : checks.entrySet() ) {
+		String ope = entry.getKey();
+		V value = entry.getValue();
+
+		if (v instanceof Integer || v instanceof Double) {
+		    if ( ope.equals(">=") ) {
+			if (((Number)v).doubleValue() < ((Number)value).doubleValue() ) {
 			    ret = false;
-			    throw new ConstraintCheckViolationException("The value must be after" + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
+			    throw new ConstraintCheckViolationException("The value must be greater than or equal to " + ((Number)value).doubleValue() );
+			
+			}
+		    }
+		    else if ( ope.equals("<=") ) {
+			if (((Number)v).doubleValue() > ((Number)value).doubleValue() ) {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("The value must be smaller than or equal to " +((Number)value).doubleValue() );
+			
+			}
+		    }
+		    else if ( ope.equals("=") ) {
+			if (((Number)v).doubleValue() != ((Number)value).doubleValue() ) {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("The value must be equal to " +((Number)value).doubleValue() );
+			
+			}
+		    }
+		    else if ( ope.equals("!=") ) {
+			if (((Number)v).doubleValue() == ((Number)value).doubleValue() ) {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("The value must be different from " +((Number)value).doubleValue() );
+			
+			}
+		    }
+		    else if ( ope.equals(">") ) {
+			ret = false;
+			if (((Number)v).doubleValue() <= ((Number)value).doubleValue() ) {
+			    throw new ConstraintCheckViolationException("The value must be greater than " +((Number)value).doubleValue() );
 
 			}
 		    }
-		    if ( ope.equals("=") ) {
-			if ( ((Date)v).compareTo( (Date)value) != 0 ) {
-			    ret = false;
-			    throw new ConstraintCheckViolationException("The value must be " + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
-
-			}
-		    }
-		    if ( ope.equals("!=") ) {
-			if ( ((Date)v).compareTo( (Date)value) == 0 ) {
-			    ret = false;
-			    throw new ConstraintCheckViolationException("The value must be before" + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
+		    else if ( ope.equals("<") ) {
+			ret = false;
+			if (((Number)v).doubleValue() >= ((Number)value).doubleValue() ) {
+			    throw new ConstraintCheckViolationException("The value must be smaller than " +((Number)value).doubleValue() );
 
 			}
 		    }
 		    else {
 			ret = false;
-			throw new ConstraintCheckViolationException("Check must be >= <= = or !=");
-
+			throw new ConstraintCheckViolationException("Check must be >= <= > < != or =");
 		    }
-		
+		}
+	    
+		else if (v instanceof String) {
+		    if ( ope.equals("=") ) {
+			if ( !((String)v).equals(value) ) {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("The value must be equal to " + value );
+
+			}
+		    }
+		    else if ( ope.equals("!=") ) {
+			if ( ((String)v).equals(value) ) throw new ConstraintCheckViolationException("The value must be different from " + value );
+		    }
+		    else {
+			ret = false;
+			throw new ConstraintCheckViolationException("Check must be = or !=");
+		    
+		    }
 		}
 
-	    }
-	}
+		else if (v instanceof Date) {
 
-	//Check the length's violation for String, Integer, Double
-	if (v instanceof String) {
- 	    if (((String)v).length() >= this.length) {
-		ret = false;
-		throw new ConstraintCheckViolationException("The value meet the length violation !");
+		    Calendar calV = Calendar.getInstance();
+		    calV.setTime((Date)v);
+		
+		    if ( ope.equals(">=") ) {
+			if ( ((Date)v).compareTo( (Date)value) < 0 ){
+			    ret = false;
+			    throw new ConstraintCheckViolationException("The value must be before" + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
+
+			}
+		    
+			if ( ope.equals("<=") ) {
+			    if ( ((Date)v).compareTo( (Date)value) > 0 ) {
+				ret = false;
+				throw new ConstraintCheckViolationException("The value must be after" + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
+
+			    }
+			}
+			if ( ope.equals("=") ) {
+			    if ( ((Date)v).compareTo( (Date)value) != 0 ) {
+				ret = false;
+				throw new ConstraintCheckViolationException("The value must be " + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
+
+			    }
+			}
+			if ( ope.equals("!=") ) {
+			    if ( ((Date)v).compareTo( (Date)value) == 0 ) {
+				ret = false;
+				throw new ConstraintCheckViolationException("The value must be before" + calV.get(Calendar.DAY_OF_MONTH) + "/" + calV.get(Calendar.MONTH) + "/" + calV.get(Calendar.YEAR) );
+
+			    }
+			}
+			else {
+			    ret = false;
+			    throw new ConstraintCheckViolationException("Check must be >= <= = or !=");
+
+			}
+		
+		    }
+
+		}
 	    }
-	}
-	else if (v instanceof Integer || v instanceof Double) {
-	    if (((Number)v).toString().length() >= this.length) {
-		ret = false;
-		throw new ConstraintCheckViolationException("The value meet the length violation !");
+
+	    //Check the length's violation for String, Integer, Double
+	    if (v instanceof String) {
+		if (((String)v).length() > this.length) {
+		    ret = false;
+		    throw new ConstraintCheckViolationException("The value meet the length violation !");
+		}
 	    }
-	}
+	    else if (v instanceof Integer || v instanceof Double) {
+		if (((Number)v).toString().length() > this.length) {
+		    ret = false;
+		    throw new ConstraintCheckViolationException("The value meet the length violation !");
+		}
+	    }
 	}
 	else {
 	    ret = false;
@@ -412,6 +499,7 @@ public class Attribute<V> {
 	}
 	return ret;
     }
+    
     /**
      * The method will be called at addConstraint, to make sure that the constraint has
      * already been added or not. return true if it's not existed yet
@@ -429,5 +517,93 @@ public class Attribute<V> {
 	return ret;
     }
 
-    
+   
+    /**
+     * Return the type of Attribute. 
+     * @return attribute's datatype
+     */
+    public DataType getType() {
+	return this.type;
+    }
+
+    public void delConstraint(int index) throws SizeException{
+
+	if ( index < 0 || index >= constraints.size() )
+	    throw new SizeException("index out of bound");
+	else
+	    constraints.remove(index);
+
+    }
+
+    public void delCheck(String ope) throws ConstraintCheckViolationException {
+	
+	V available = checks.remove(ope);
+	
+	if (available == null)
+	    throw new ConstraintCheckViolationException("Failed to delete check");
+
+    }
+
+    protected void delValue(int index) throws SizeException {
+
+	if ( index < 0 || index >= values.size() )
+	    throw new SizeException("index out of bound");
+	else
+	    values.remove(index);
+		
+    }
+
+    public Attribute<V> cloneAttribute() throws SizeException{
+	return new Attribute(this.tab, this.name, this.length, this.type);
+    }
+   
+    public String toStringValue(int i) throws SizeException {
+
+	String ret = null;
+
+	if ( i < 0 || i >= values.size() )
+	    throw new SizeException("index out of bound");
+	else {
+	
+	    if( this.getType() == DataType.DATE ) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		ret = sdf.format(values.get(i));
+
+	    }
+	    else {
+		ret = values.get(i).toString();
+	    }
+	}
+
+	return ret;
+    }
+
+    public ArrayList<String> toStringValues() {
+ 	
+	ArrayList<String> ret = new ArrayList<String>();
+
+	for ( V v : values ) {
+     
+	    if( this.getType() == DataType.DATE ) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		ret.add(sdf.format(v));
+
+	    }
+	    else {
+		ret.add(v.toString());
+	    }
+	    
+	}
+
+	return ret;
+					    
+    }
+
+    public void setReferenceTable(Table tab) { this.referenceTable = tab; }
+    public Table getReferenceTable() { return this.referenceTable; }
+    public Attribute<V> getReferenceKey() { return this.referenceKey; }
+    public Table getTable() { return this.tab; }
+
 }

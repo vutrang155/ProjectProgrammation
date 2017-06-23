@@ -1,0 +1,21 @@
+package database.exception; 
+
+/**
+ * The Column Exception caught when there's problems with columns
+ * @author TRANG Hoang Phong Vu
+ */
+public class ColumnException extends Exception {
+
+    public ColumnException() {
+
+	super();
+
+    }
+
+    public ColumnException(String msg) {
+
+	super(msg);
+
+    }
+
+}

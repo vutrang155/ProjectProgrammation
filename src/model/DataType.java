@@ -4,7 +4,7 @@ package database.model;
   */
 public enum DataType {
   CHAR,
-  NUMBER,
+  INTEGER,
   DOUBLE,
   DATE
 }
